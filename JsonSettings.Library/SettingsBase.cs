@@ -22,13 +22,13 @@ namespace JsonSettings.Library
 
         protected virtual void Initialize() { }
 
-        public static T Load<T>(EventHandler<Newtonsoft.Json.Serialization.ErrorEventArgs> error = null) where T : SettingsBase, new()
+        public static T Load<T>(Action<JsonSerializerSettings> updateSettings = null, EventHandler<Newtonsoft.Json.Serialization.ErrorEventArgs> error = null) where T : SettingsBase, new()
         {
             T result = new T();
 
             if (File.Exists(result.Filename))
             {
-                result = JsonFile.Load<T>(result.Filename, error: error) ?? result;
+                result = JsonFile.Load<T>(result.Filename, updateSettings: updateSettings, error: error) ?? result;
             }
 
             result.Initialize();
