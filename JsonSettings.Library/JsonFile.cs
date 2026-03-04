@@ -56,7 +56,7 @@ namespace JsonSettings
             return Load<T>(fileName);
         }
 
-        public static T Load<T>(string fileName, Func<T> ifNotExists = null, EventHandler<Newtonsoft.Json.Serialization.ErrorEventArgs> error = null)
+        public static T Load<T>(string fileName, Func<T> ifNotExists = null, Action<JsonSerializerSettings> updateSettings = null, EventHandler<Newtonsoft.Json.Serialization.ErrorEventArgs> error = null)
         {
             if (!File.Exists(fileName) && ifNotExists != null) return ifNotExists.Invoke();
 
@@ -67,6 +67,8 @@ namespace JsonSettings
                     Error = error,
                     ContractResolver = new DataProtectionResolver()
                 };
+
+                updateSettings?.Invoke(settings);
 
                 string json = reader.ReadToEnd();
                 if (!string.IsNullOrEmpty(json) && !json.Equals("null"))
@@ -84,7 +86,7 @@ namespace JsonSettings
             return await LoadAsync<T>(fileName);
         }
 
-        public async static Task<T> LoadAsync<T>(string fileName, Func<T> ifNotExists = null, EventHandler<Newtonsoft.Json.Serialization.ErrorEventArgs> error = null)
+        public async static Task<T> LoadAsync<T>(string fileName, Func<T> ifNotExists = null, Action<JsonSerializerSettings> updateSettings = null, EventHandler<Newtonsoft.Json.Serialization.ErrorEventArgs> error = null)
         {
             if (!File.Exists(fileName) && ifNotExists != null) return ifNotExists.Invoke();
 
@@ -95,6 +97,8 @@ namespace JsonSettings
                     Error = error,
                     ContractResolver = new DataProtectionResolver()
                 };
+
+                updateSettings?.Invoke(settings);
 
                 string json = await reader.ReadToEndAsync();
                 if (!json.Equals(string.Empty))
